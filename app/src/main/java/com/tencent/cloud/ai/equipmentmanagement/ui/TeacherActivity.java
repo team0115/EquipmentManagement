@@ -3,6 +3,8 @@ package com.tencent.cloud.ai.equipmentmanagement.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,10 +20,13 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.tencent.cloud.ai.equipmentmanagement.R;
 import com.tencent.cloud.ai.equipmentmanagement.base.BaseActivity;
+import com.tencent.cloud.ai.equipmentmanagement.bean.RequestBean;
 import com.tencent.cloud.ai.equipmentmanagement.custom.TimeTableView;
 import com.tencent.cloud.ai.equipmentmanagement.listener.ClassListener;
+import com.tencent.cloud.ai.equipmentmanagement.listener.DXHttpListener;
 import com.tencent.cloud.ai.equipmentmanagement.model.ClassInfo;
 import com.tencent.cloud.ai.equipmentmanagement.model.TimeTableModel;
+import com.tencent.cloud.ai.equipmentmanagement.utils.DXHttpManager;
 import com.tencent.cloud.ai.equipmentmanagement.utils.TestString;
 
 import java.io.IOException;
@@ -34,10 +39,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-public class TeacherActivity extends BaseActivity implements View.OnClickListener, ClassListener {
+public class TeacherActivity extends BaseActivity implements View.OnClickListener, ClassListener, DXHttpListener {
 
     public final String TAG = this.getClass().getSimpleName();
-    String url = "https://wwww.baidu.com";
+    String url_1 = "http://39.99.253.162/lab/course/getAllCourse?week_num=1";
+    String url_2 = "http://39.99.253.162/lab/course/getAllCourse?week_num=2";
+    String url_3 = "http://39.99.253.162/lab/course/getAllCourse?week_num=3";
+    String url_4 = "http://39.99.253.162/lab/course/getAllCourse?week_num=4";
+    String url_5 = "http://39.99.253.162/lab/course/getAllCourse?week_num=5";
+    String url_6 = "http://39.99.253.162/lab/course/getAllCourse?week_num=6";
+    String url_7 = "http://39.99.253.162/lab/course/getAllCourse?week_num=7";
     private  OkHttpClient okHttpClient;
     private  Request request;
     private  Call call;
@@ -46,6 +57,7 @@ public class TeacherActivity extends BaseActivity implements View.OnClickListene
     private LinearLayout t_sy_application,ll_class;
     private List<TimeTableModel> mList;
     private TimeTableView mTimaTableView;
+    private int  weekNumClass = 0;
 
     @Override
     public void myOnCreate() {
@@ -54,17 +66,24 @@ public class TeacherActivity extends BaseActivity implements View.OnClickListene
         initView();
 
         //OkHttp 三部曲
-        okHttpClient = new OkHttpClient();
-        request = new Request.Builder()
-                .url(url)
-                .get()//默认就是GET请求，可以不写
-                .build();
-        call = okHttpClient.newCall(request);
-        getData();
-        Toast.makeText(this, "排课", Toast.LENGTH_SHORT).show();
+//        okHttpClient = new OkHttpClient();
+//        request = new Request.Builder()
+//                .url(url)
+//                .get()//默认就是GET请求，可以不写
+//                .build();
+//        call = okHttpClient.newCall(request);
+//
+//        Toast.makeText(this, "排课", Toast.LENGTH_SHORT).show();
 
 
-
+        DXHttpManager.getmInstance().sendGetRequest(url_1,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_2,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_3,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_4,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_5,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_6,null,100,this);
+        DXHttpManager.getmInstance().sendGetRequest(url_7,null,100,this);
+//        getData();
         mTimaTableView.setListener(this);
     }
 
@@ -82,29 +101,28 @@ public class TeacherActivity extends BaseActivity implements View.OnClickListene
         use_require.setOnClickListener(this);
     }
 
-    public void getData(){
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: "+e.getLocalizedMessage()+" "+e.getMessage());
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                //这里模拟访问数据成功
-                Log.d(TAG, "onResponse: " + response.body().string());
-                String result = TestString.classInfo;//模拟数据 真实数据为：response.body().string()
-                Log.e("hb==: ",result);
-                Gson gson  = new Gson();
-                ClassInfo info = gson.fromJson(result, ClassInfo.class);
-                for (int i=0;i<info.getCourse().size();i++){
-                    mList.add(new TimeTableModel(info.getCourse().get(i)));
-                }
-                mTimaTableView.setTimeTable(mList);
-
-            }
-        });
-    }
+//    public void getData(){
+//        call.enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                Log.d(TAG, "onFailure: "+e.getLocalizedMessage()+" "+e.getMessage());
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//
+//                String str = response.body().string();
+//                Log.d(TAG, str);
+//                Gson gson  = new Gson();
+//                ClassInfo info = gson.fromJson(str, ClassInfo.class);
+//                for (int i=0;i<info.getCourse().size();i++){
+//                    mList.add(new TimeTableModel(info.getCourse().get(i)));
+//                }
+//                mTimaTableView.setTimeTable(mList);
+//
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(View v) {
@@ -154,5 +172,26 @@ public class TeacherActivity extends BaseActivity implements View.OnClickListene
         Log.d(TAG, "onSelectClass: "+week+" "+clum);
         mTimaTableView.removeAllViews();
         mTimaTableView.setTimeTable(mList);
+    }
+
+    @Override
+    public void onSuccess(String result) throws IOException {
+        ++weekNumClass;
+        Log.d(TAG, result);
+        Gson gson  = new Gson();
+        ClassInfo info = gson.fromJson(result, ClassInfo.class);
+        for (int i=0;i<info.getCourse().size();i++){
+            mList.add(new TimeTableModel(info.getCourse().get(i)));
+        }
+        if (weekNumClass==7){
+            mTimaTableView.setTimeTable(mList);
+            weekNumClass = 0;
+        }
+
+    }
+
+    @Override
+    public void onFailed(int tag, IOException e) {
+
     }
 }

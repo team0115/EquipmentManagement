@@ -4,71 +4,22 @@ import java.util.List;
 
 public class ClassInfo {
 
+
     private String msg;
     private Integer code;
     private List<CourseDTO> course;
 
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public void setCode(Integer code) {
-        this.code = code;
-    }
-
-    public List<CourseDTO> getCourse() {
-        return course;
-    }
-
-    public void setCourse(List<CourseDTO> course) {
-        this.course = course;
-    }
-
     public static class CourseDTO {
-        /**
-         * 周数(第几周)
-         */
         private Integer weekNum;
-        /**
-         * 时间(每天第几节课)
-         */
         private Integer dayTimes;
-        /**
-         *  星期(1-星期一，2-星期二...etc..)
-         */
         private Integer week;
-        /**
-         * 教师id
-         */
         private Integer teacherId;
-        /**
-         * 教室名称
-         */
         private String classroomName;
-        /**
-         * 课程名称
-         */
         private String courseName;
-        /**
-         * 创建时间
-         */
         private String createTime;
-        /**
-         * 更新时间
-         */
         private String updateTime;
-        /**
-         * 上课老师
-         */
         private String username;
+        private String realname;
 
         public Integer getWeekNum() {
             return weekNum;
@@ -141,5 +92,37 @@ public class ClassInfo {
         public void setUsername(String username) {
             this.username = username;
         }
+
+        public String getRealname() {
+            return realname;
+        }
+
+        public void setRealname(String realname) {
+            this.realname = realname;
+        }
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
+
+    public List<CourseDTO> getCourse() {
+        return course;
+    }
+
+    public void setCourse(List<CourseDTO> course) {
+        this.course = course;
     }
 }

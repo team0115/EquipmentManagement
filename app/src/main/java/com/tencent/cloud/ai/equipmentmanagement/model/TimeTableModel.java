@@ -128,7 +128,7 @@ public class TimeTableModel {
         this.id = id;   //id 目前并没有用到
         this.startnum = info.getDayTimes(); //开始时间
         this.endnum = info.getDayTimes(); //结束时间
-        this.week = info.getWeek();  //星期几
+        this.week = info.getWeekNum();  //星期几
         this.starttime = info.getCreateTime();
         this.endtime = info.getCreateTime();
         this.name = "test1";
